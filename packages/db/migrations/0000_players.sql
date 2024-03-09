@@ -1,3 +1,4 @@
+-- TODO: add uuids...
 insert into players (name, mmr) values
 ('nulo', 400),
 ('pachegodd', 1600),
