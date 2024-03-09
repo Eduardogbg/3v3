@@ -1,10 +1,7 @@
 {
-  "name": "3v3-dos-cria",
+  "name": "db",
   "module": "src/index.ts",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
     "@types/bun": "latest"
   },
