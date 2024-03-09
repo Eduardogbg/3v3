@@ -1,4 +1,4 @@
-import type { Game, Participant, Player } from './schemas'
+import type { Participant, Player } from './schemas'
 
 type Ratings = { [playerName: string]: number }
 
@@ -17,7 +17,7 @@ export const μ = 1600
 */
 const eloDelta = (playerRating: number, opposingTeamRating: number) => {
     const delta = playerRating - opposingTeamRating
-    return k * (-1 / (1 + Math.exp(-delta / σ)))
+    return k / (1 + Math.exp(-delta / σ))
 };
 
 export function calculateRatings(
@@ -31,7 +31,7 @@ export function calculateRatings(
     }
 
     type GameTeams = { winningTeam: Player[]; losingTeam: Player[] }
-    
+
     const gameIds = participants
         .map(p => p.game_id)
         .filter((value, index, array) => array.indexOf(value) === index)
@@ -40,33 +40,28 @@ export function calculateRatings(
 
 
     const gameTeams = gameIds.map(gameId => ({
-            winningTeam: participants
-                .filter(p => p.game_id === gameId && p.team === 'v')
-                .map(participant => players.find(player => player.rowid === participant.player_id)!),
-            losingTeam: participants
-                .filter(p => p.game_id === gameId && p.team === 'd')
-                .map(participant => players.find(player => player.rowid === participant.player_id)!),
-        }))
+        winningTeam: participants
+            .filter(p => p.game_id === gameId && p.team === 'v')
+            .map(participant => players.find(player => player.id === participant.player_id)!),
+        losingTeam: participants
+            .filter(p => p.game_id === gameId && p.team === 'd')
+            .map(participant => players.find(player => player.id === participant.player_id)!),
+    }))
 
     console.log({ gameTeams })
-    
+
 
     for (const { winningTeam, losingTeam } of gameTeams) {
         const winningTeamRating = teamAverage(winningTeam);
         const losingTeamRating = teamAverage(losingTeam);
 
         for (const player of winningTeam) {
-            // TODO: check if the sign is right
-            ratings[player.name] -= 0.7 * eloDelta(player.mmr, losingTeamRating)
-            ratings[player.name] -= 0.3 * eloDelta(player.mmr, winningTeamRating)
-
-	}
-
+            ratings[player.name] += eloDelta(player.mmr, losingTeamRating)
+        }
 
         for (const player of losingTeam) {
-            ratings[player.name] += 0.7 * eloDelta(player.mmr, winningTeamRating);
-            ratings[player.name] += 0.3 * eloDelta(player.mmr, losingTeamRating);
-	}
+            ratings[player.name] -= eloDelta(player.mmr, winningTeamRating);
+        }
     }
 
     return ratings;

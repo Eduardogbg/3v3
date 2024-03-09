@@ -14,6 +14,16 @@
         nativeBuildInputs = [
           pkgs.bun
           pkgs.sqlite
+
+          # TODO: to lazy for this rn (https://nixos.wiki/wiki/Rust)
+          # pkgs.rustc
+          # pkgs.cargo
+          # pkgs.rustfmt
+          # pkgs.clippy
+          # pkgs.rust-analyzer
+
+          # # README: https://nixos.wiki/wiki/Rust#Using_LLD_instead_of_LD
+          # pkgs.llvmPackages.bintools
         ];
       };
    });

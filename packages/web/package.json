@@ -3,8 +3,9 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "bun build src/index.ts --outdir out",
-    "serve": "bun run build && bunx serve out"
+    "dev": "bunx --bun vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -16,7 +17,14 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@orbitinghail/sqlsync-react": "^0.3.0",
+    "@orbitinghail/sqlsync-worker": "^0.3.0",
+    "@types/uuid": "^9.0.8",
+    "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.1",
+    "vite": "^5.1.5",
+    "zod": "^3.22.4"
   }
 }
