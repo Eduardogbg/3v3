@@ -1,74 +1,54 @@
-import { journalIdFromString, sql } from '@orbitinghail/sqlsync-worker'
-import { useCallback, useEffect, type FormEvent, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
-import { useMutate, useQuery } from './reducer'
+import { sql, type JournalId } from '@orbitinghail/sqlsync-worker'
+import { CodeHighlight } from '@mantine/code-highlight'
+import { Container, Paper, Stack } from '@mantine/core'
+import { useMutate, useQuery } from './doctype'
+import { CreatePlayer } from './create-player'
+import { AddGame } from './add-game'
 
 
-const DOC_ID = journalIdFromString('VM7fC4gKxa52pbdtrgd9G9');
-
-
-export function App() {
-    const mutate = useMutate(DOC_ID);
-
-    useEffect(() => {
-        mutate({ tag: 'InitSchema' }).catch((err) => {
-            console.error('Failed to init schema', err);
-        });
-    }, [mutate]);
-
-    const [playerName, setPlayerName] = useState<string>('');
-    const [mmr, setMmr] = useState<number>(1600);
-
-    const handleSubmit = useCallback(
-        (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-
-            const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-
-            if (playerName.trim() !== '') {
-                mutate({
-                    tag: 'AddPlayer',
-                    id,
-                    name: playerName,
-                    mmr,
-                }).catch((err) => {
-                    console.error('Failed to add message', err);
-                });
-
-                setPlayerName('');
-            }
-        },
-        [mutate, playerName, mmr, setPlayerName],
-    );
+export function App(props: { docId: JournalId }) {
+    // FIXME: bundler issue? JournalId is unique, and differs from src to dist
+    const mutate = useMutate(props.docId as any)
 
     // TODO: import schema type from db
-    const { rows } = useQuery<{ id: string, name: string, mmr: number }>(
-        DOC_ID,
+    const players = useQuery<{ id: string, name: string, mmr: number }>(
+        props.docId as any,
         sql`select id, name, mmr from players`,
-    );
+    ).rows ?? []
+
+    const games = useQuery<{ id: string, date: string, winning_team_side: string }>(
+        props.docId as any,
+        sql`select id, date, winning_team_side from games`,
+    ).rows ?? []
+
+    const participants = useQuery<{ game_id: string, player_id: string, team: string, champion: string }>(
+        props.docId as any,
+        sql`select game_id, player_id, team, champion from participants`,
+    ).rows ?? []
+
+    console.log({ players, games, participants })
+
+    const data = {
+        players,
+        games: games.map(g => ({
+            ...g,
+            participants: participants.filter(p => p.game_id === g.id),
+        }))
+    }
 
     return (
-        <div>
-            <pre>
-                {JSON.stringify(rows, null, 2)}
-            </pre>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="playerName">Player Name</label>
-                <input
-                    id="playerName"
-                    type="text"
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
-                />
-                <label htmlFor="mmr">MMR</label>
-                <input
-                    id="mmr"
-                    type="number"
-                    value={mmr}
-                    onChange={(e) => setMmr(Number(e.target.value))}
-                />
-                <button type="submit">Add Player</button>
-            </form>
-        </div>
+        <Container size='xs' py='sm'>
+            <Stack>
+                <Paper component={Stack} shadow='xs' p='xs'>
+                    <CreatePlayer mutate={mutate} />
+                </Paper>
+                <Paper component={Stack} shadow='xs' p='xs'>
+                    <AddGame mutate={mutate} players={players} />
+                </Paper>
+                <Paper component={Stack} shadow='xs' p='xs'>
+                    <CodeHighlight code={JSON.stringify(data, null, 2)} language='json' />
+                </Paper>
+            </Stack>
+        </Container>
     )
 }
