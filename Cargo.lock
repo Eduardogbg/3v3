@@ -212,9 +212,9 @@ dependencies = [
 
 [[package]]
 name = "sqlsync-reducer"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3724f81a75e254a5da8d36e029ee651fb2e47d3a7b6cc292875f8fcd6b011876"
+checksum = "a109c0febbdeace808ef30bf67ed8b7e2ebd0e42bb5ccc6b71eaf6290e20a8c5"
 dependencies = [
  "bincode",
  "futures",
