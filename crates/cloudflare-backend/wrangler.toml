@@ -7,10 +7,10 @@ r2_buckets = [
     { binding = "SQLSYNC_REDUCERS", bucket_name = "mud-pond", preview_bucket_name = "mud-pond-dev" },
 ]
 
-[build]
+# [build]
 # TODO: automatically switch between these two commands based on the environment
 # command = "cargo install -q worker-build && worker-build --dev"
-command = "cargo install -q worker-build && worker-build"
+# command = "cargo install -q worker-build && worker-build"
 
 [durable_objects]
 bindings = [{ name = "COORDINATOR", class_name = "DocumentCoordinator" }]
