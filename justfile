@@ -1,4 +1,4 @@
-RANKED_ARAM_PROD_URL := "https://shiny-mud.eduardogbg.workers.dev/"
+RANKED_ARAM_PROD_URL := "https://sqlsync.eduardogbg.workers.dev"
 
 wasm-reducer *FLAGS:
     cargo build --target wasm32-unknown-unknown --package reducer {{FLAGS}}
