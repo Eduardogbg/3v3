@@ -7,17 +7,17 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-gloo = { workspace = true, features = ["cloudflare"] }
-futures.workspace = true
-worker.workspace = true
-console_error_panic_hook.workspace = true
-sqlsync = { path = "../../lib/sqlsync" }
-bincode.workspace = true
-serde-wasm-bindgen.workspace = true
-serde_bytes.workspace = true
-anyhow.workspace = true
-wasm-bindgen.workspace = true
-js-sys.workspace = true
-bs58.workspace = true
+gloo = { git = "https://github.com/carlsverre/gloo", rev = "8f48a39a0a1e126e3c455525d5b4c51487102333", features = ["futures", "cloudflare"] }
+futures = { version = "0.3" }
+worker = { version = "0.0.18" }
+console_error_panic_hook = { version = "0.1" }
+sqlsync = { path = "../../../sqlsync/lib/sqlsync" }
+bincode = { version = "1.3" }
+serde-wasm-bindgen = { version = "0.6" }
+serde_bytes = { version = "0.11" }
+anyhow = { version = "1.0" }
+wasm-bindgen = { version = "0.2" }
+js-sys = { version = "0.3" }
+bs58 = { version = "0.5" }
 
-web-sys = { workspace = true, features = ["Crypto", "SubtleCrypto"] }
+web-sys = { version = "0.3", features = ["Crypto", "SubtleCrypto"] }
