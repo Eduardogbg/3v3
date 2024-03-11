@@ -54,7 +54,35 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
 
     match mutation {
         Mutation::InitSchema => {
-            execute!(include_str!("../../../packages/db/migrations/schema.sql")).await?;
+            // README: https://discord.com/channels/1149205110262595634/1216750158449086464
+            // execute!(include_str!("../../../packages/db/migrations/schema.sql")).await?;
+            execute!(
+                r#"create table if not exists players (
+                id text primary key not null,
+                name text unique not null,
+                mmr number not null
+            );"#
+            )
+            .await?;
+            execute!(
+                r#"create table if not exists games (
+                id text primary key not null,
+                date text not null default (datetime('now')),
+                winning_team_side text
+            );"#
+            )
+            .await?;
+            execute!(
+                r#"create table if not exists participants (
+                game_id text not null references games(id),
+                player_id text not null references players(id),
+                team text not null check(team in ('v', 'd')),
+                champion text,
+
+                primary key (game_id, player_id)
+            );"#
+            )
+            .await?;
         }
 
         Mutation::CreatePlayer { id, name, mmr } => {
@@ -88,27 +116,8 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 date,
                 winning_team_side
             )
-            .await;
+            .await?;
 
-            match result {
-                Ok(_) => (),
-                Err(err) => {
-                    match err {
-                        sqlsync_reducer::types::ErrorResponse::SqliteError { code, message } => {
-                            log::error!("sqlite error: {}", message);
-                            log::error!("sqlite error code: {}", code);
-                        }
-                        sqlsync_reducer::types::ErrorResponse::Unknown(e) => {
-                            log::error!("unknown error: {:?}", e);
-                        }
-                    }
-
-                    return Err(ReducerError::ConversionError {
-                        value: SqliteValue::from("mentira esse erro fui eu que criei hehe "),
-                        target_type: "String".to_owned(),
-                    });
-                }
-            }
             log::info!("deu certo");
 
             for game_player in players {
