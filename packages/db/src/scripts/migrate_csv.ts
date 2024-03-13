@@ -1,5 +1,6 @@
 import { Database } from 'bun:sqlite'
 import type { Player } from '../schemas'
+import { randomUUID } from 'node:crypto'
 
 const db = Database.open('test.db')
 
@@ -65,13 +66,14 @@ async function migrateCsvToDb() {
         const marDate = '2024-03-01'
 
         // TODO: eventually make some type-safe wrapper on top of sqlite?? maybe not...
-        const { rowId: gameId } = db
-            .query('insert into games (date) values (?) returning rowid as rowId')
+        const { gameId } = db
+            .query('insert into games (id, date) values (?, ?) returning id as gameId')
             .get(
+                randomUUID(),
                 champions.every(c => c.length === 0)
                     ? febDate
                     : marDate
-            ) as unknown as { rowId: number };
+            ) as unknown as { gameId: number };
 
         for (const [index, result] of results.entries()) {
             if (!result) {
@@ -84,10 +86,13 @@ async function migrateCsvToDb() {
                 throw new Error(`Player ${index} not found`)
             }
 
+            console.log({ player });
+            const playerId = (db.query('select id from players where name = ?').get(player.name.toLocaleLowerCase()) as unknown as any).id;
+
             db.run(
                 'insert into participants (player_id, game_id, team, champion) values (?, ?, ?, ?)',
                 [
-                    player.rowid,
+                    playerId,
                     gameId,
                     result.toLowerCase(),
                     champions[index],

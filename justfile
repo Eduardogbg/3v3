@@ -3,7 +3,7 @@ RANKED_ARAM_PROD_URL := "https://sqlsync.eduardogbg.workers.dev"
 wasm-reducer *FLAGS:
     cargo build --target wasm32-unknown-unknown --package reducer {{FLAGS}}
 
-upload-demo-reducer mode='release' target='local':  
+upload-reducer mode='release' target='local':  
     #!/usr/bin/env bash
     set -euo pipefail
     cd crates/cloudflare-backend

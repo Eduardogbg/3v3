@@ -1,6 +1,6 @@
 import { sql, type JournalId } from '@orbitinghail/sqlsync-worker'
 import { CodeHighlight } from '@mantine/code-highlight'
-import { Container, Paper, Stack } from '@mantine/core'
+import { Container, Grid, Paper, Stack } from '@mantine/core'
 import { useMutate, useQuery } from './doctype'
 import { CreatePlayer } from './create-player'
 import { AddGame } from './add-game'
@@ -37,18 +37,20 @@ export function App(props: { docId: JournalId }) {
     }
 
     return (
-        <Container size='xs' py='sm'>
-            <Stack>
-                <Paper component={Stack} shadow='xs' p='xs'>
-                    <CreatePlayer mutate={mutate} />
-                </Paper>
-                <Paper component={Stack} shadow='xs' p='xs'>
-                    <AddGame mutate={mutate} players={players} />
-                </Paper>
-                <Paper component={Stack} shadow='xs' p='xs'>
-                    <CodeHighlight code={JSON.stringify(data, null, 2)} language='json' />
-                </Paper>
-            </Stack>
+        <Container size='100vw' py='sm'>
+            <Grid justify='center' align='stretch'>
+                <Grid.Col span={3}>
+                    <Paper component={Stack} shadow='xs' p='xs'>
+                        <CreatePlayer mutate={mutate} />
+                        <CodeHighlight code={JSON.stringify(data, null, 2)} language='json' />
+                    </Paper>
+                </Grid.Col>
+                <Grid.Col span={3}>
+                    <Paper component={Stack} shadow='xs' p='xs'>
+                        <AddGame mutate={mutate} players={players} />
+                    </Paper>
+                </Grid.Col>
+            </Grid>
         </Container>
     )
 }

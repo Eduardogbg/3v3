@@ -33,21 +33,25 @@ const COORDINATOR_URL = isLocalhost
     ? `${location.hostname}:8787`
     // TODO: use my own coordinator
     : 'sqlsync.eduardogbg.workers.dev'
+
 const COORDINATOR_URL_WS = `${isLocalhost ? "ws" : "wss"}://${COORDINATOR_URL}`
 
 const newDocumentId = async (name = '') => {
     let url = `${location.protocol}//${COORDINATOR_URL}/new`
+
     if (name.trim().length > 0) {
         url += `/${encodeURIComponent(name)}`
     }
+
     const response = await fetch(url, {
         method: 'POST',
     })
+
     if (!response.ok) {
         throw new Error(`Failed to create new document: ${response.status}`)
     }
+
     return journalIdFromString(await response.text())
-    // return journalIdFromString('VM7fC4gKxa52pbdtrgd9G9');
 }
 
 const DocRoute = () => {

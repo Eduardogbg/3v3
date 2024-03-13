@@ -2,21 +2,23 @@ export type TeamSide = 'blue' | 'red'
 
 export type TeamResult = 'v' | 'd'
 
-export type Player = {
+type SqliteDocument<T> = T & { rowid: number }
+
+export type Player = SqliteDocument<{
     id: string
     name: string
     mmr: number
-}
+}>
 
-export type Game = {
+export type Game = SqliteDocument<{
     id: string
     winning_side: TeamSide
     date: Date
-}
+}>
 
-export type Participant = {
+export type Participant = SqliteDocument<{
     player_id: string
     game_id: string
     team: TeamResult
     champion: string | null
-}
+}>
