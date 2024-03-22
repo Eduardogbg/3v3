@@ -1,5 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable"
-import { Text } from "@mantine/core"
+import { Paper, Text } from "@mantine/core"
 import classNames from "classnames"
 
 import type { GamePlayer, Player } from "../../types"
@@ -50,7 +50,7 @@ export const PlayerPreview = (props: PlayerPreviewProps) => {
 
 
     return (
-        <li
+        <Paper
             ref={setNodeRef}
             style={{
                 transition: [transition]
@@ -78,6 +78,7 @@ export const PlayerPreview = (props: PlayerPreviewProps) => {
                 isSorting && itemClasses.sorting,
                 dragOverlay && itemClasses.dragOverlay
             )}
+            withBorder
             {...listeners}
             {...attributes}
         >
@@ -89,6 +90,6 @@ export const PlayerPreview = (props: PlayerPreviewProps) => {
             <Text size='sm'>
                 {player.name}
             </Text>
-        </li>
+        </Paper>
     )
 }

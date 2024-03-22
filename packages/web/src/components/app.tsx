@@ -1,6 +1,6 @@
 import { sql, type JournalId } from '@orbitinghail/sqlsync-worker'
 import { CodeHighlight } from '@mantine/code-highlight'
-import { AppShell, Container, Flex, Grid, Paper, Stack, useMantineTheme } from '@mantine/core'
+import { AppShell, Container, Flex, Grid, Paper, Stack, useMantineColorScheme, useMantineTheme } from '@mantine/core'
 import { useMutate, useQuery } from '../doctype'
 import { CreatePlayerForm } from './create-player-form'
 import { AddGameForm } from './add-game-form/add-game-form'
@@ -8,7 +8,7 @@ import { AddGameForm } from './add-game-form/add-game-form'
 import appClasses from './app.module.css'
 
 export function App(props: { docId: JournalId }) {
-    const theme = useMantineTheme()
+    const { colorScheme } = useMantineColorScheme()
 
     // FIXME: bundler issue? JournalId is unique, and differs from src to dist
     const mutate = useMutate(props.docId as any)
@@ -40,7 +40,14 @@ export function App(props: { docId: JournalId }) {
     }
 
     return (
-        <AppShell>
+        <AppShell
+            // TODO: this in more places
+            style={theme => ({
+                backgroundColor: colorScheme === 'dark'
+                    ? theme.colors.dark[6]
+                    : theme.colors.white
+            })}
+        >
             <AppShell.Main>
                 <Flex
                     p='md'
@@ -53,7 +60,8 @@ export function App(props: { docId: JournalId }) {
                         component={Stack}
                         shadow='xs'
                         p='md'
-                        h={'min-content'}
+                        h='min-content'
+                        withBorder
                     >
                         <AddGameForm mutate={mutate} players={players} />
                     </Paper>
@@ -61,7 +69,8 @@ export function App(props: { docId: JournalId }) {
                         component={Stack}
                         shadow='xs'
                         p='md'
-                        h={'min-content'}
+                        h='min-content'
+                        withBorder
                     >
                         <CreatePlayerForm mutate={mutate} />
                         <CodeHighlight code={JSON.stringify(data, null, 2)} language='json' />

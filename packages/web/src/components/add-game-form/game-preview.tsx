@@ -265,7 +265,7 @@ export function GamePreview({ players, gamePlayers, setGamePlayers }: GamePrevie
                             key={teamResult}
                             strategy={verticalListSortingStrategy}
                             items={getTeamItems(teamResult)}
-                        >''
+                        >
                             <TeamPreview
                                 team={teamResult}
                                 players={players.filter(p => (
