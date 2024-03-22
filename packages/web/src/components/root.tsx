@@ -16,7 +16,7 @@ import '@mantine/dates/styles.css'
 
 // App
 import { App } from './app'
-import { MANTINE_THEME } from './theme'
+import { MANTINE_DARK_THEME, MANTINE_THEME } from './theme'
 
 
 console.log({
@@ -109,9 +109,15 @@ const router = createBrowserRouter([
 
 
 export function Root() {
+    type ThemeModes = 'dark' | 'light'
+    const theme: ThemeModes = (localStorage.getItem('theme') ?? 'dark') as ThemeModes
+
     return (
         <StrictMode>
-            <MantineProvider theme={MANTINE_THEME}>
+            <MantineProvider
+                theme={theme === 'light' ? MANTINE_THEME : MANTINE_DARK_THEME}
+                defaultColorScheme={theme}
+            >
                 <SQLSyncProvider
                     wasmUrl={sqlSyncWasmUrl}
                     workerUrl={workerUrl}

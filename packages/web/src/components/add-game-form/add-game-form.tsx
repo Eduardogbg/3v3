@@ -1,164 +1,92 @@
-import { Button, Flex, Select, Text, Title, type OptionsFilter, Image, Container, Grid } from '@mantine/core'
-import { DateTimePicker } from '@mantine/dates'
-import type { Mutation } from './doctype'
 import { useCallback } from 'react'
-import { UseFormReturnType, useForm } from '@mantine/form'
-import type { GamePlayer, Player, TeamResult } from './types'
 import { CodeHighlight } from '@mantine/code-highlight'
-import lolChampions from './champions.json'
-import { SortEnd, SortableContainer, SortableElement } from 'react-sortable-hoc'
+import { Button, Flex, Select, Title, type OptionsFilter } from '@mantine/core'
+import { DateTimePicker } from '@mantine/dates'
+import { useForm } from '@mantine/form'
+
+import type { Mutation } from '../../doctype'
+import type { GamePlayer, Player, TeamSide } from '../../types'
+
+import lolChampions from '../../assets/champions.json'
+import { GamePreview } from './game-preview'
 
 
-export interface AddGameProps {
+type AddGameForm = {
+    date: string
+    gamePlayers: GamePlayer[]
+    winningTeamSide: TeamSide | null
+}
+
+
+export interface AddGameFormProps {
     mutate: (m: Mutation) => Promise<void>
     players: Player[]
 }
 
-export function ChampionIcon(props: { size: string, championName: string }) {
-    return (
-        <div style={{ width: props.size, height: props.size }}>
-            <Image
-                src={`https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${props.championName}.png`}
-            />
-        </div>
-    )
-}
+export function AddGameForm({ mutate, players: _ }: AddGameFormProps) {
+    const players = [
+        {
+            id: '71b73848-95a6-4da0-8b12-bbb63dc6df84',
+            name: 'TGod',
+            mmr: 1600,
+        },
+        {
+            id: 'e3afdc90-3c7e-42ec-bb0c-f7bf78c2c1a9',
+            name: 'ZZ',
+            mmr: 2000,
+        },
+        {
+            id: '1a53279c-55ed-4913-b8b3-512132133cc7',
+            name: 'Leleko',
+            mmr: 2000,
+        },
+        {
+            id: '4d8ef08f-d6ad-4a91-a226-a4ba45ae8869',
+            name: 'Gomão',
+            mmr: 1600,
+        }
+    ]
 
-interface PlayerPreviewProps {
-    player: Player
-    gamePlayer: GamePlayer
-}
-
-const PlayerPreview = SortableElement<PlayerPreviewProps>((props: PlayerPreviewProps) => {
-    const { player, gamePlayer } = props
-    const { champion } = gamePlayer
-
-    return (
-        <li>
-            {
-                champion && (
-                    <ChampionIcon size='32px' championName={champion} />
-                )
-            }
-            <Text size='sm'>
-                {player.name}
-            </Text>
-        </li>
-    )
-})
-
-interface TeamPreviewProps {
-    team: TeamResult
-    players: Player[]
-    gamePlayers: GamePlayer[]
-}
-
-const TeamPreview = SortableContainer<TeamPreviewProps>((props: TeamPreviewProps) => {
-    const { team, players, gamePlayers } = props
-
-    return (
-        <ul>
-            {gamePlayers.map((gamePlayer, index) => (
-                gamePlayer.team !== team ? null : (
-                    <PlayerPreview
-                        index={index}
-                        key={gamePlayer.player_id}
-                        gamePlayer={gamePlayer}
-                        player={players.find(p => p.id == gamePlayer.player_id)!} />
-                )
-            ))}
-        </ul>
-    )
-})
-
-interface GamePreviewProps {
-    addGameForm: UseFormReturnType<{
-        date: string,
-        players: GamePlayer[],
-        winning_team_side: string | null
-    }>
-    players: Player[]
-}
-
-// TODO: this code is AI generated, it's probably shit
-function arrayMove<T>(array: T[], oldIndex: number, newIndex: number): T[] {
-    console.log('arrayMove', oldIndex, newIndex)
-    const newArray = [...array]
-    const oldElement = newArray.splice(oldIndex, 1)[0]
-    newArray.splice(newIndex, 0, oldElement)
-    return newArray
-}
-
-const teamPreviewOnSortEnd = (
-    team: TeamResult,
-    addGameForm: UseFormReturnType<{
-        date: string,
-        players: GamePlayer[],
-        winning_team_side: string | null
-    }>
-) => (sort: SortEnd) => {
-    const { players } = addGameForm.values
-    const { oldIndex, newIndex } = sort
-
-    addGameForm.setValues({
-        ...addGameForm.values,
-        players: arrayMove(players, oldIndex, newIndex),
-    })
-}
-
-export function GamePreview({ addGameForm, players }: GamePreviewProps) {
-    /*
-    Needs a column for each team, a row for each player preview
-    This component will preview each player.
-    */
-
-    // const winningTeamPlayers = addGameForm.values.players.filter(p => p.team == 'v')
-    // const losingTeamPlayers = addGameForm.values.players.filter(p => p.team == 'd')
-
-    return (
-        <Container size='xs' py='sm'>
-            <Grid justify='space-around' align='center'>
-                <Grid.Col span={3}>
-                    <TeamPreview
-                        onSortEnd={teamPreviewOnSortEnd('v', addGameForm)}
-                        team='v'
-                        players={players}
-                        gamePlayers={addGameForm.values.players}
-                    />
-                </Grid.Col>
-                <Grid.Col span={3}>
-                    <TeamPreview
-                        onSortEnd={teamPreviewOnSortEnd('d', addGameForm)}
-                        team='d'
-                        players={players}
-                        gamePlayers={addGameForm.values.players}
-                    />
-                </Grid.Col>
-            </Grid>
-        </Container>
-    )
-}
-
-export function AddGame({ mutate, players }: AddGameProps) {
-    const addGameForm = useForm({
+    const addGameForm = useForm<AddGameForm>({
         initialValues: {
             date: '',
-            players: [] as GamePlayer[],
-            winning_team_side: null,
+            gamePlayers: [
+                {
+                    player_id: '71b73848-95a6-4da0-8b12-bbb63dc6df84',
+                    champion: 'Akali',
+                    team: 'v',
+                },
+                {
+                    player_id: 'e3afdc90-3c7e-42ec-bb0c-f7bf78c2c1a9',
+                    champion: 'Varus',
+                    team: 'v',
+                },
+                {
+                    player_id: '1a53279c-55ed-4913-b8b3-512132133cc7',
+                    champion: 'Orianna',
+                    team: 'v',
+                },
+                {
+                    player_id: '4d8ef08f-d6ad-4a91-a226-a4ba45ae8869',
+                    champion: 'Amumu',
+                    team: 'd',
+                },
+            ] as GamePlayer[],
+            winningTeamSide: null,
         }
     })
 
     const handleSubmitGame = addGameForm.onSubmit(useCallback(
         ({
             date,
-            players,
-            winning_team_side,
+            gamePlayers,
+            winningTeamSide: winning_team_side,
         }) => {
             let mutation = {
                 tag: 'AddGame',
                 id: crypto.randomUUID(),
                 date,
-                players,
+                gamePlayers,
                 winning_team_side,
             }
             console.log('submitting game', { mutation })
@@ -167,8 +95,8 @@ export function AddGame({ mutate, players }: AddGameProps) {
                 tag: 'AddGame',
                 id: crypto.randomUUID(),
                 date: date.toString(),
-                players,
-                winning_team_side,
+                gamePlayers,
+                winningTeamSide: winning_team_side,
             })
                 .then(() => addGameForm.reset())
                 .catch((err) => {
@@ -201,8 +129,8 @@ export function AddGame({ mutate, players }: AddGameProps) {
 
             addGameForm.setValues({
                 ...addGameForm.values,
-                players: [
-                    ...addGameForm.values.players,
+                gamePlayers: [
+                    ...addGameForm.values.gamePlayers,
                     gamePlayer,
                 ]
             })
@@ -223,7 +151,7 @@ export function AddGame({ mutate, players }: AddGameProps) {
             return (
                 !addGameForm
                     .values
-                    .players
+                    .gamePlayers
                     .map(p => p.player_id)
                     .includes(playerId)
             )
@@ -244,7 +172,7 @@ export function AddGame({ mutate, players }: AddGameProps) {
     const playerData = players.map(p => ({ value: p.id, label: p.name }))
 
     return (
-        <>
+        <Flex direction='column' gap='xs'>
             <form onSubmit={handleSubmitPlayer}>
                 <Title order={4}>Add Player</Title>
                 <Flex direction='column' gap='xs'>
@@ -281,13 +209,13 @@ export function AddGame({ mutate, players }: AddGameProps) {
                 <Title order={4}>Add Game</Title>
                 <Flex direction='column' gap='xs'>
                     <Select
-                        id='winning_team_side'
+                        id='winningTeamSide'
                         label='Winning Team Side'
                         data={[
                             { value: 'blue', label: 'Blue' },
                             { value: 'red', label: 'Red' },
                         ]}
-                        {...addGameForm.getInputProps('winning_team_side')}
+                        {...addGameForm.getInputProps('winningTeamSide')}
                     />
                     <DateTimePicker
                         id='date'
@@ -298,10 +226,18 @@ export function AddGame({ mutate, players }: AddGameProps) {
                         +
                     </Button>
                 </Flex>
-                {/* TODO: fix */}
-                {<GamePreview addGameForm={addGameForm as any} players={players} />}
+                <GamePreview
+                    players={players}
+                    gamePlayers={addGameForm.values.gamePlayers}
+                    setGamePlayers={gps => (
+                        addGameForm.setValues({
+                            ...addGameForm.values,
+                            gamePlayers: gps
+                        })
+                    )}
+                />
                 <CodeHighlight code={JSON.stringify(addGameForm.values, null, 2)} language='json' />
             </form>
-        </>
+        </Flex>
     )
 }

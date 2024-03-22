@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88" viewBox="-3 -3 85 85">
+    <!-- bottom-most details -->
+    <polygon points="6,40 6,32 32,6 40,6" style="fill:#141414;stroke:goldenrod;stroke-width:3" />
+
+    <polygon points="74,40, 74,48 48,74, 40,74" style="fill:#141414;stroke:goldenrod;stroke-width:3" />
+    <!-- -->
+
+    <!-- exterior triangles -->
+    <polygon points="11,34 11,11 34,11" style="fill:#141414;stroke:goldenrod;stroke-width:2" />
+
+    <polygon points="46,69 69,69 69,46" style="fill:#141414;stroke:goldenrod;stroke-width:2" />
+    <!-- -->
+
+    <!-- interior octagon -->
+    <polygon points="81,0 81,33 62,51 62,62 51,62 33,81 0,81 0,48 17,28 17,17 28,17 48,0"
+        style="fill:#141414;stroke:goldenrod;stroke-width:2" />
+    <!--  -->
+
+    <!-- centerpiece -->
+    <polygon points="8,72 8,49 49,8 72,8 72,31 31,72" style="fill:url(#centerpiece);stroke:goldenrod;stroke-width:3" />
+    <!--  -->
+
+
+    <defs>
+        <linearGradient id="centerpiece">
+            <stop offset="0%" stop-color="navy" />
+            <stop offset="100%" stop-color="cyan" />
+        </linearGradient>
+    </defs>
+</svg>

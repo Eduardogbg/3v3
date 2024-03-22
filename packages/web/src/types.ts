@@ -5,6 +5,7 @@ export type Player = {
     mmr: number
 }
 
+// TODO: deal with casing
 export type Game = {
     id: string
     date: string

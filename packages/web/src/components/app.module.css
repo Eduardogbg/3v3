@@ -1,0 +1,9 @@
+.app {
+    width: 100vw;
+    padding: 2em 3vw 2em 3vw;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+}

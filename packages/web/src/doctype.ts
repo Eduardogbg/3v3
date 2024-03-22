@@ -25,14 +25,23 @@ export type Mutation = (
         tag: 'AddGame'
         id: string
         date: string
-        players: GamePlayer[]
-        winning_team_side: TeamSide | null
+        gamePlayers: GamePlayer[]
+        winningTeamSide: TeamSide | null
     }
 )
 
+function convertCamelToSnake(str: string) {
+    return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1_').toLowerCase()
+}
+
 export const GameDocType: DocType<Mutation> = {
     reducerUrl: REDUCER_URL,
-    serializeMutation: serializeMutationAsJSON,
+    serializeMutation: mutation => {
+        // TODO: do this for deeper properties
+        const caseCorrectedMutation = Object.fromEntries(Object.entries(mutation).map(([k, v]) => [convertCamelToSnake(k), v]))
+
+        return serializeMutationAsJSON(caseCorrectedMutation)
+    },
 }
 
 export const { useMutate, useQuery, useSetConnectionEnabled } = createDocHooks(GameDocType)

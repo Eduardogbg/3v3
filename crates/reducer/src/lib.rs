@@ -40,10 +40,8 @@ enum Mutation {
     },
     AddGame {
         id: String,
-
         date: String,
-        players: Vec<GamePlayer>,
-
+        game_players: Vec<GamePlayer>,
         winning_team_side: Option<String>,
     },
 }
@@ -99,11 +97,11 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
         Mutation::AddGame {
             id: game_id,
             date,
+            game_players,
             winning_team_side,
-            players,
         } => {
             log::info!("appending game {}", game_id);
-            log::info!("players: {:?}", players);
+            log::info!("players: {:?}", game_players);
 
             log::info!(
                 "debugging winning_team_side {:?}",
@@ -120,7 +118,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
 
             log::info!("deu certo");
 
-            for game_player in players {
+            for game_player in game_players {
                 log::info!(
                     "appending game player {} {} {:?}",
                     game_id,
@@ -157,8 +155,8 @@ mod tests {
         let add_game_mutation = Mutation::AddGame {
             id: "game_id".to_string(),
             date: "2023-01-01".to_string(),
+            game_players: vec![game_player],
             winning_team_side: Some("blue".to_string()),
-            players: vec![game_player],
         };
 
         assert_eq!(

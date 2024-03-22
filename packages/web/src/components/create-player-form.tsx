@@ -1,14 +1,14 @@
 import { useForm } from '@mantine/form';
 import { Button, Flex, NumberInput, Text, TextInput, Title } from '@mantine/core';
 import { useCallback, useEffect } from 'react'
-import type { Mutation } from './doctype'
+import type { Mutation } from '../doctype'
 
 
-export interface AddPlayerProps {
+export interface CreatePlayerFormProps {
     mutate: (m: Mutation) => Promise<void>
 }
 
-export function CreatePlayer({ mutate }: AddPlayerProps) {
+export function CreatePlayerForm({ mutate }: CreatePlayerFormProps) {
     useEffect(() => {
         mutate({ tag: 'InitSchema' }).catch((err) => {
             console.error('Failed to init schema', err);
@@ -43,27 +43,27 @@ export function CreatePlayer({ mutate }: AddPlayerProps) {
     ))
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Title order={4}>Create Player</Title>
-            <Flex gap='xs'>
+        <Flex>
+            <form onSubmit={handleSubmit}>
+                <Title order={4}>Create Player</Title>
                 {/* TODO: standardize casing in web codebase */}
-                <label htmlFor='playerName'>Name</label>
-                <TextInput
-                    style={{ flex: 1 }}
-                    styles={{ input: { fontSize: '16px' } }}
-                    required
-                    {...form.getInputProps('playerName')}
-                />
-                <label htmlFor='mmr'>MMR</label>
-                <NumberInput
-                    style={{ flex: 1 }}
-                    styles={{ input: { fontSize: '16px' } }}
-                    required
-                    step={50}
-                    {...form.getInputProps('mmr')}
-                />
-                <Button type='submit'>+</Button>
-            </Flex>
-        </form>
+                <Flex direction='column' gap='xs'>
+                    <label htmlFor='playerName'>Name</label>
+                    <TextInput
+                        styles={{ input: { fontSize: '16px' } }}
+                        required
+                        {...form.getInputProps('playerName')}
+                    />
+                    <label htmlFor='mmr'>MMR</label>
+                    <NumberInput
+                        styles={{ input: { fontSize: '16px' } }}
+                        required
+                        step={50}
+                        {...form.getInputProps('mmr')}
+                    />
+                    <Button type='submit'>+</Button>
+                </Flex>
+            </form>
+        </Flex>
     )
 }
