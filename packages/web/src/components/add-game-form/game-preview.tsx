@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { SortableContext, horizontalListSortingStrategy, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import {
     CollisionDetection, DndContext, DragOverlay, DropAnimation, MeasuringStrategy, MouseSensor, TouchSensor, KeyboardSensor,
     UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, getFirstCollision, pointerWithin, rectIntersection,
     useSensor, useSensors
 } from '@dnd-kit/core'
+import classNames from 'classnames'
+
+import type { GamePlayer, Player, TeamResult } from '../../types'
 import { PlayerPreview } from './player-preview'
 import { TeamPreview } from './team-preview'
-import type { GamePlayer, Player, TeamResult } from '../../types'
-import { createPortal } from 'react-dom'
 import { coordinateGetter } from './keyboard-coordinates'
-import { Flex, Group } from '@mantine/core'
+
+import classes from './game-preview.module.css'
 
 
 interface GamePreviewProps {
     gamePlayers: GamePlayer[]
     setGamePlayers: (gps: GamePlayer[]) => void
     players: Player[]
+
+    className?: string
 }
 
 // TODO: test suite for this function
@@ -40,7 +45,7 @@ export const dropAnimation: DropAnimation = {
     }),
 }
 
-export function GamePreview({ players, gamePlayers, setGamePlayers }: GamePreviewProps) {
+export function GamePreview({ players, gamePlayers, setGamePlayers, ...props }: GamePreviewProps) {
     const sensors = useSensors(
         useSensor(MouseSensor),
         useSensor(TouchSensor),
@@ -245,21 +250,7 @@ export function GamePreview({ players, gamePlayers, setGamePlayers }: GamePrevie
                 strategy={horizontalListSortingStrategy}
                 items={['v', 'd']}
             >
-                {/* <Flex
-                    direction='row'
-                    w='100%'
-                    wrap='wrap'
-                    gap='xs'
-                    align='start'
-                    justify='space-between' */}
-
-                <div
-                    style={{
-                        display: 'flex',
-                        // flexDirection: 'column',
-                        justifyContent: 'space-between',
-                    }}
-                >
+                <div className={classNames(props.className, classes.container)}>
                     {CONTAINER_IDS.map(teamResult => (
                         <SortableContext
                             key={teamResult}

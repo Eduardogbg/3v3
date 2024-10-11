@@ -1,7 +1,7 @@
 import { useForm } from '@mantine/form';
 import { Button, Flex, NumberInput, Text, TextInput, Title } from '@mantine/core';
 import { useCallback, useEffect } from 'react'
-import type { Mutation } from '../doctype'
+import type { Mutation } from '../../doctype'
 
 
 export interface CreatePlayerFormProps {
